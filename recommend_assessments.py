@@ -9,16 +9,14 @@ import pprint
 import pickle
 import google.generativeai as genai
 
-genai.configure(api_key=os.getenv("AIzaSyAB_HZKai0J8mBgLDSSrp3KJ5Qn4A_2OrQ"))
+genai.configure(api_key=os.getenv("Gemini_API_key"))
 model = genai.GenerativeModel("gemini-pro")
 
 
 
-# Load model and FAISS index
 model = SentenceTransformer('all-MiniLM-L6-v2')
 index = faiss.read_index("shl_faiss_index.index")
 
-# Load assessment metadata
 with open("shl_metadata.pkl", "rb") as f:
     documents = pickle.load(f)
 
