@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SHL Assessment Recommender</title>
+  <style>
+    *{
+      font-family: 'montserrat';
+    }
+    body {
+      /* font-family: 'montserrat'; */
+      background: #f7f7f7;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    button {
+      /* font-family: 'montserrat'; */
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #468529;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    button:hover {
+      background-color: #468529;
+    }
+    .results {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .assessment {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+    }
+    .assessment h3 {
+      margin-top: 0;
+      color: #468529;
+    }
+    .a{
+      color: #468529;
+    }
+  </style>
+</head>
+<body>
+  <h1>SHL Assessment Recommendation</h1>
+
+  <textarea id="query" placeholder="Enter job description or requirement..."></textarea>
+  <button onclick="getRecommendations()">Get Recommendations</button>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    async function getRecommendations() {
+      const query = document.getElementById("query").value.trim();
+      if (!query) {
+        alert("Please enter a query");
+        return;
+      }
+
+      const res = await fetch("/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await res.json();
+      const resultContainer = document.getElementById("results");
+      resultContainer.innerHTML = "";
+
+      if (data["recommended assessments"]) {
+        data["recommended assessments"].forEach(item => {
+          const div = document.createElement("div");
+          div.classList.add("assessment");
+          div.innerHTML = `
+            <h3><a href="${item.url}" target="_blank">${item.url}</a></h3>
+            <p><strong>Description:</strong> ${item.description}</p>
+            <p><strong>Duration:</strong> ${item.duration} mins</p>
+            <p><strong>Adaptive Support:</strong> ${item.adaptive_support}</p>
+            <p><strong>Remote Support:</strong> ${item.remote_support}</p>
+            <p><strong>Test Type:</strong> ${item.test_type.join(", ")}</p>
+          `;
+          resultContainer.appendChild(div);
+        });
+      } else {
+        resultContainer.innerHTML = "<p>No assessments found.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
