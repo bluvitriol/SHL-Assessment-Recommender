@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
@@ -31,6 +31,10 @@ def recommend():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/", methods=["GET"])
+def home():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
